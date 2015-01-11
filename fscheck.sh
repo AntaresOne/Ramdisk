@@ -9,8 +9,14 @@ $BB mount -o remount,rw /;
 $BB mv /fstab.qcom /fstab.org;
 
 FS_CACHE0=$(eval $(/sbin/ext/blkid /dev/block/mmcblk0p18 | /sbin/ext/busybox cut -c 24-); /sbin/ext/busybox echo $TYPE);
-FS_DATA0=$(eval $(/sbin/ext/blkid /dev/block/mmcblk0p29 | /sbin/ext/busybox cut -c 24-); /sbin/ext/busybox echo $TYPE);
 FS_SYSTEM0=$(eval $(/sbin/ext/blkid /dev/block/mmcblk0p16 | /sbin/ext/busybox cut -c 24-); /sbin/ext/busybox echo $TYPE);
+GPE=`cat /proc/cmdline | grep -o 'samsung.hardware=[^\ ]*'`
+
+if [ "$GPE" == "samsung.hardware=GT-I9505G" ]; then
+	FS_DATA0=$(eval $(/sbin/ext/blkid /dev/block/mmcblk0p28 | /sbin/ext/busybox cut -c 24-); /sbin/ext/busybox echo $TYPE);
+else
+	FS_DATA0=$(eval $(/sbin/ext/blkid /dev/block/mmcblk0p29 | /sbin/ext/busybox cut -c 24-); /sbin/ext/busybox echo $TYPE);
+fi;
 
 if [ "$FS_SYSTEM0" == "ext4" ]; then
 	$BB sed -i "s/# EXT4SYS//g" /fstab.tmp;
